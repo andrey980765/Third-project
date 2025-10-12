@@ -1,0 +1,31 @@
+{% extends "photometadata/base.html" %}
+{% load static %}
+{% block content %}
+<!-- Заголовок над колонками -->
+<!-- Заголовок -->
+<h2 style="text-align:center; margin-bottom:30px;">Список файлов</h2>
+
+<!-- JSON файлы -->
+<h3>JSON</h3>
+{% if jfiles %}
+  <ul class="file-list">
+    {% for f in jfiles %}
+      <li><a href="{% url 'photometadata:file_detail' 'json' f %}">{{ f }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Нет JSON файлов.</p>
+{% endif %}
+
+<h3>XML</h3>
+{% if xfiles %}
+  <ul class="file-list">
+    {% for f in xfiles %}
+      <li><a href="{% url 'photometadata:file_detail' 'xml' f %}">{{ f }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Нет XML файлов.</p>
+{% endif %}
+
+{% endblock %}
