@@ -1,17 +1,10 @@
 {% extends "photometadata/base.html" %}
 {% load static %}
 {% block content %}
-  <h2>Файл: {{ fname }} ({{ ftype }})</h2>
-
-  {% if parsed %}
-    <h3>Структурированные данные</h3>
-    <pre>{{ parsed }}</pre>
-  {% endif %}
-
-  {% if raw %}
-    <h3>Raw</h3>
-    <pre>{{ raw|escape }}</pre>
-  {% endif %}
-
-  <p><a href="{% url 'photometadata:list_files' %}">Назад к списку</a></p>
+<h2>Файл: {{ fname }} ({{ ftype }})</h2>
+{% if parsed %}
+  <h3>Структурированные данные</h3>
+  <pre>{{ parsed }}</pre>
+{% endif %}
+<p><a href="{% url 'photometadata:list_files' %}">Назад к списку</a></p>
 {% endblock %}

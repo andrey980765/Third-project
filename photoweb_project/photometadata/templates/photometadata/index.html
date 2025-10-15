@@ -8,13 +8,12 @@
         {% csrf_token %}
         {{ form.as_p }}
           <button type="submit" name="save_json">Сохранить как JSON</button>
-          <button type="submit" name="save_xml">Сохранить как XML</button>
     </div>
     </form>
 </div>
 
   <div class="card">
-        <h2>Загрузить файл JSON / XML</h2>
+        <h2>Загрузить файл JSON</h2>
         <form method="post" action="{% url 'photometadata:upload_file' %}" enctype="multipart/form-data">
             {% csrf_token %}
             {{ upload_form.as_p }}

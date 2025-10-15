@@ -122,10 +122,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # сюда будем сохранять json/xml
 
-# убедимся, что папки есть (необязательно, но удобно)
-os.makedirs(os.path.join(MEDIA_ROOT, 'json'), exist_ok=True)
-os.makedirs(os.path.join(MEDIA_ROOT, 'xml'), exist_ok=True)
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

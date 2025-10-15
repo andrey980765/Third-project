@@ -35,9 +35,8 @@ def generate_secure_filename(ext: str) -> str:
     return f"{uuid.uuid4().hex}.{ext}"
 
 def ensure_dirs(base_dir):
-    """Создаёт подпапки json и xml, если их нет."""
+    """Создаёт подпапки json, если ее нет."""
     os.makedirs(os.path.join(base_dir, 'json'), exist_ok=True)
-    os.makedirs(os.path.join(base_dir, 'xml'), exist_ok=True)
 
 # -----------------------
 # Проверки
@@ -108,86 +107,6 @@ def validate_json_data(obj: dict):
     return (len(errors) == 0), errors
 
 # -----------------------
-# XML parsing
-# -----------------------
-def parse_and_validate_xml_string(xml_string: str):
-    """
-    Ожидаемый формат XML:
-    <photo>
-      <title>...</title>
-      <photographer>...</photographer>
-      <date_taken>YYYY-MM-DD</date_taken>
-      <url>...</url>
-      <tags><tag>a</tag><tag>b</tag></tags>
-      ...
-    </photo>
-    Возвращаем (ok:bool, errors:list, data:dict_or_None)
-    """
-    errors = []
-    try:
-        root = ET.fromstring(xml_string)
-    except ET.ParseError as e:
-        return False, [f"XML parse error: {e}"], None
-
-    if root.tag != 'photo':
-        errors.append("Root element must be <photo>")
-
-    def get_text(tag):
-        el = root.find(tag)
-        return el.text.strip() if (el is not None and el.text) else None
-
-    data = {}
-    data['title'] = get_text('title')
-    data['photographer'] = get_text('photographer')
-    data['date_taken'] = get_text('date_taken')
-    data['url'] = get_text('url')
-    data['description'] = get_text('description')
-    data['location'] = get_text('location')
-    data['camera'] = get_text('camera')
-    data['license'] = get_text('license')
-
-    # tags
-    tags_el = root.find('tags')
-    tags = []
-    if tags_el is not None:
-        for t in tags_el.findall('tag'):
-            if t.text:
-                tags.append(t.text.strip())
-    if tags:
-        data['tags'] = tags
-
-    # width/height
-    w = get_text('width')
-    h = get_text('height')
-    if w:
-        try:
-            data['width'] = int(w)
-        except:
-            errors.append("width must be integer")
-    if h:
-        try:
-            data['height'] = int(h)
-        except:
-            errors.append("height must be integer")
-
-    # required checks
-    for k in ['title','photographer','date_taken','url']:
-        if not data.get(k):
-            errors.append(f"Missing required element: {k}")
-
-    # date/url validation
-    if data.get('date_taken'):
-        ok, msg = validate_date_iso(data['date_taken'])
-        if not ok:
-            errors.append(f"date_taken must be YYYY-MM-DD. Error: {msg}")
-    if data.get('url'):
-        ok, msg = validate_url(data['url'])
-        if not ok:
-            errors.append(f"url is invalid. Error: {msg}")
-
-    return (len(errors) == 0), errors, data
-
-# -----------------------
 # Чтение/запись файлов
 # -----------------------
 def save_json_to_file(base_dir: str, data_obj: dict):
@@ -198,26 +117,12 @@ def save_json_to_file(base_dir: str, data_obj: dict):
         json.dump(data_obj, f, ensure_ascii=False, indent=2)
     return fname, path
 
-def save_xml_to_file(base_dir: str, xml_string: str):
-    ensure_dirs(base_dir)
-    fname = generate_secure_filename('xml')
-    path = os.path.join(base_dir, 'xml', fname)
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(xml_string)
-    return fname, path
-
 def list_files(base_dir: str):
     ensure_dirs(base_dir)
     j = [f for f in os.listdir(os.path.join(base_dir,'json')) if f.endswith('.json')]
-    x = [f for f in os.listdir(os.path.join(base_dir,'xml')) if f.endswith('.xml')]
-    return j, x
+    return j,
 
 def read_json_file(base_dir: str, filename: str):
     p = os.path.join(base_dir, 'json', filename)
     with open(p, encoding='utf-8') as f:
         return json.load(f)
-
-def read_xml_file(base_dir: str, filename: str):
-    p = os.path.join(base_dir, 'xml', filename)
-    with open(p, encoding='utf-8') as f:
-        return f.read()

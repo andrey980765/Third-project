@@ -26,4 +26,4 @@ class UploadFileForm(forms.Form):
     Простая форма загрузки файла.
     Мы не доверяем имени файла, только содержимому.
     """
-    file = forms.FileField(label="Файл JSON или XML")
+    file = forms.FileField(label="Файл JSON")
